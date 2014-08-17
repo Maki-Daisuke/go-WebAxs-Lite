@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	fsp := NewFileSystemPoint("share", ".", os.TempDir())
+	fsp := NewFileSystemPoint("share", os.Args[1], os.TempDir())
 	fsp.readableUsers[""] = true
 	fsp.readableUsers["admin"] = true
 	Mount("share", fsp)

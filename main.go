@@ -42,12 +42,15 @@ func HandleLs(res http.ResponseWriter, params martini.Params) {
 
 func HandleCat(res http.ResponseWriter, req *http.Request, params martini.Params) {
 	path := ResolvePath(params["_1"])
-	rs, err := path.Reader()
-	if err != nil {
+	if path == nil {
 		res.WriteHeader(404)
 	} else {
-		//io.Copy(res, rs)
-		http.ServeContent(res, req, path.Clean(), path.ModTime(), rs)
+		rs, err := path.Reader()
+		if err != nil {
+			res.WriteHeader(404)
+		} else {
+			http.ServeContent(res, req, path.Clean(), path.ModTime(), rs)
+		}
 	}
 }
 

@@ -55,7 +55,7 @@ func HandleCat(res http.ResponseWriter, req *http.Request, params martini.Params
 }
 
 func HandleUserConfig() string {
-	return `{"lang":"ja"}`
+	return `{"webaxs_version":"3.0-Lite", "lang":"ja", "name":":anonymous"}`
 }
 
 func HandleVersion() string {

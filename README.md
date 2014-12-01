@@ -18,11 +18,12 @@ Then, clone the repository:
 > cd go-WebAxs-Lite
 ```
 
-Install dependencies with `go get`. This software (currently) depends only on
-[Martini](http://martini.codegangsta.io/):
+Install dependencies with `go get`. This software (currently) depends on
+[Martini](http://martini.codegangsta.io/) and [magick](https://github.com/quirkey/magick):
 
 ```
 > go get github.com/go-martini/martini
+> go get github.com/quirkey/magick
 ```
 
 And, build it!

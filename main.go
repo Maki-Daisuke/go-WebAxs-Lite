@@ -20,6 +20,7 @@ func main() {
 	m.Post("/rpc/version", HandleVersion)
 	m.Get("/rpc/ls/**", HandleLs)
 	m.Get("/rpc/cat/**", HandleCat)
+	m.Get("/rpc/thumbnail/**", HandleThumbnail)
 	m.Get("/rpc/user_config", HandleUserConfig)
 	m.Run()
 }

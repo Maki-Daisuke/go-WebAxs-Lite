@@ -69,8 +69,7 @@ var sizeAlias = map[string]string{
 var reGeometry, _ = regexp.Compile(`^[0-9]+x[0-9]+$`)
 
 func parseSize(size string) (geometry string) {
-	match := reGeometry.FindStringSubmatch(size)
-	if match != nil {
+	if reGeometry.MatchString(size) {
 		return size
 	} else {
 		geometry = sizeAlias[size]

@@ -60,7 +60,7 @@ func handleThumbnailAux(res http.ResponseWriter, req *http.Request, file *FilePa
 var sizeAlias = map[string]string{
 	"S":  "42x42",
 	"M":  "85x85",
-	"L":  "180x80",
+	"L":  "180x180",
 	"LL": "232x232",
 	"3L": "500x500",
 	"4L": "1024x1024",

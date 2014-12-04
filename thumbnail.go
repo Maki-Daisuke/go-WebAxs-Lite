@@ -1,15 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
+	"os/exec"
 	"regexp"
 
 	"github.com/go-martini/martini"
-	"github.com/quirkey/magick"
 )
-
-var _ = magick.NewFromFile
 
 func HandleThumbnail(res http.ResponseWriter, req *http.Request, params martini.Params) {
 	path := ResolvePath(params["_1"])
@@ -36,22 +35,20 @@ func handleNonBlocking(res http.ResponseWriter) {
 }
 
 func handleThumbnailAux(res http.ResponseWriter, req *http.Request, file *FilePath) {
-	im, err := magick.NewFromFile(file.Physical())
-	if err != nil {
-		panic(fmt.Sprintf("Can't load image file: %s", file.Physical()))
-	}
 	geometry := parseSize(req.URL.Query().Get("size"))
-	err = im.Resize(geometry)
+	// convert <INPUT> -resize <SIZE> -background white -gravity center -extent <SIZE> - # output to STDOUT
+	cmd := exec.Command("convert", file.Physical(), "-resize", geometry, "-background", "white", "-gravity", "center", "-extent", geometry, "-format", "jpg", "-")
+	stdout := bytes.NewBuffer([]byte{})
+	cmd.Stdout = stdout
+	stderr := bytes.NewBuffer([]byte{})
+	cmd.Stderr = stderr
+	err := cmd.Run()
 	if err != nil {
-		panic("Can't resize image: " + err.Error())
-	}
-	blob, err := im.ToBlob("jpg")
-	if err != nil {
-		panic("Can't convert jpeg blob" + err.Error())
+		panic("convert command failed: " + stderr.String())
 	}
 	res.WriteHeader(200)
 	res.Header().Add("Content-Type", "image/jpeg")
-	_, err = res.Write(blob)
+	_, err = res.Write(stdout.Bytes())
 	if err != nil {
 		panic(err.Error())
 	}

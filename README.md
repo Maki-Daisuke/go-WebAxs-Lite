@@ -9,7 +9,15 @@ For Perl implementation, see [here](https://github.com/Maki-Daisuke/WebAxs-Lite)
 ## Installation ##
 
 This is implemented in Go. You need to install [Go tools](http://golang.org/doc/install)
-and setup development environment for Go at first.
+and setup development environment for Go at first. You could install Go with
+package manager of you system. For example, you can use aptitude on Ubuntu:
+
+    aptitude install golang
+
+Also, this software uses [ImageMagick](http://www.imagemagick.org/). Install it
+as well:
+
+    aptitude install imagemagick
 
 Then, clone the repository:
 
@@ -19,11 +27,10 @@ Then, clone the repository:
 ```
 
 Install dependencies with `go get`. This software (currently) depends on
-[Martini](http://martini.codegangsta.io/) and [magick](https://github.com/quirkey/magick):
+[Martini](http://martini.codegangsta.io/):
 
 ```
 > go get github.com/go-martini/martini
-> go get github.com/quirkey/magick
 ```
 
 And, build it!

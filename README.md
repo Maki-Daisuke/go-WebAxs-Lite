@@ -27,10 +27,12 @@ Then, clone the repository:
 ```
 
 Install dependencies with `go get`. This software (currently) depends on
-[Martini](http://martini.codegangsta.io/):
+[Negroni](http://martini.codegangsta.io/) and
+[Gorilla Mux](http://www.gorillatoolkit.org/pkg/mux):
 
 ```
-> go get github.com/go-martini/martini
+> go get github.com/codegangsta/negroni
+> go get github.com/gorilla/mux
 ```
 
 And, build it!

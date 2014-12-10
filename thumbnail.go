@@ -7,11 +7,12 @@ import (
 	"os/exec"
 	"regexp"
 
-	"github.com/go-martini/martini"
+	"github.com/gorilla/mux"
 )
 
-func HandleThumbnail(res http.ResponseWriter, req *http.Request, params martini.Params) {
-	path := ResolvePath(params["_1"])
+func HandleThumbnail(res http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	path := ResolvePath(vars["path"])
 	if !isImageFile(path) {
 		res.WriteHeader(404)
 		res.Header().Add("Content-Type", "text/plain")

@@ -27,7 +27,7 @@ Then, clone the repository:
 ```
 
 Install dependencies with `go get`. This software (currently) depends on
-[Negroni](http://martini.codegangsta.io/) and
+[Negroni](http://negroni.codegangsta.io/) and
 [Gorilla Mux](http://www.gorillatoolkit.org/pkg/mux):
 
 ```

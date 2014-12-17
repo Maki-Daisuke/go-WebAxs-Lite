@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 
-	"github.com/go-martini/martini"
+	"github.com/codegangsta/negroni"
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -14,19 +16,20 @@ func main() {
 	fsp.readableUsers[""] = true
 	fsp.readableUsers["admin"] = true
 	Mount("share", fsp)
-	//	fmt.Println(mapping[0])
-	m := martini.Classic()
-	m.Get("/rpc/version", HandleVersion)
-	m.Post("/rpc/version", HandleVersion)
-	m.Get("/rpc/ls/**", HandleLs)
-	m.Get("/rpc/cat/**", HandleCat)
-	m.Get("/rpc/thumbnail/**", HandleThumbnail)
-	m.Get("/rpc/user_config", HandleUserConfig)
-	m.Run()
+	m := mux.NewRouter()
+	m.HandleFunc("/rpc/version", HandleVersion)
+	m.HandleFunc(`/rpc/ls{path:/[^?]*}`, HandleLs)
+	m.HandleFunc(`/rpc/cat{path:/[^?]*}`, HandleCat)
+	m.HandleFunc(`/rpc/thumbnail{path:/.*}`, HandleThumbnail)
+	m.HandleFunc("/rpc/user_config", HandleUserConfig)
+	n := negroni.Classic()
+	n.UseHandler(m)
+	n.Run(":3000")
 }
 
-func HandleLs(res http.ResponseWriter, params martini.Params) {
-	path := ResolvePath(params["_1"])
+func HandleLs(res http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	path := ResolvePath(vars["path"])
 	if path == nil || !path.Exists() {
 		res.WriteHeader(404)
 		fmt.Fprint(res, "File not found")
@@ -41,8 +44,9 @@ func HandleLs(res http.ResponseWriter, params martini.Params) {
 	}
 }
 
-func HandleCat(res http.ResponseWriter, req *http.Request, params martini.Params) {
-	path := ResolvePath(params["_1"])
+func HandleCat(res http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	path := ResolvePath(vars["path"])
 	if path == nil {
 		res.WriteHeader(404)
 	} else {
@@ -55,10 +59,10 @@ func HandleCat(res http.ResponseWriter, req *http.Request, params martini.Params
 	}
 }
 
-func HandleUserConfig() string {
-	return `{"webaxs_version":"3.0-Lite", "lang":"ja", "name":":anonymous"}`
+func HandleUserConfig(res http.ResponseWriter, _ *http.Request) {
+	io.WriteString(res, `{"webaxs_version":"3.0-Lite", "lang":"ja", "name":":anonymous"}`)
 }
 
-func HandleVersion() string {
-	return "3.1"
+func HandleVersion(res http.ResponseWriter, _ *http.Request) {
+	io.WriteString(res, "3.1")
 }

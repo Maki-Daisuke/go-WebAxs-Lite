@@ -9,10 +9,19 @@ import (
 
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
+	flags "github.com/jessevdk/go-flags"
 )
 
+var opts struct {
+	Port uint `short:"p" long:"port" default:"9000" description:"Port number to listen"`
+}
+
 func main() {
-	fsp := NewFileSystemPoint("share", os.Args[1], os.TempDir())
+	args, err := flags.Parse(&opts)
+	if err != nil {
+		os.Exit(1)
+	}
+	fsp := NewFileSystemPoint("share", args[0], os.TempDir())
 	fsp.readableUsers[""] = true
 	fsp.readableUsers["admin"] = true
 	Mount("share", fsp)
@@ -24,7 +33,7 @@ func main() {
 	m.HandleFunc("/rpc/user_config", HandleUserConfig)
 	n := negroni.Classic()
 	n.UseHandler(m)
-	n.Run(":3000")
+	n.Run(fmt.Sprintf(":%d", opts.Port))
 }
 
 func HandleLs(res http.ResponseWriter, req *http.Request) {

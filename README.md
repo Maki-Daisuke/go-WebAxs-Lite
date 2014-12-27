@@ -49,13 +49,13 @@ that specifies directory to publish:
 
 ```
 > ./go-WebAxs-Lite DIRECTRY-TO-PUBLISH
-[martini] listening on :3000 (development)
+[martini] listening on :9000 (development)
 ```
 
 Now you can call WebAxs-RPC on localhost:3000:
 
 ```
-> curl -D - http://localhost:3000/rpc/ls/
+> curl -D - http://localhost:9000/rpc/ls/
 HTTP/1.1 200 OK
 Content-Type: application/json
 Date: Mon, 18 Aug 2014 01:45:25 GMT
@@ -72,7 +72,7 @@ published automatically:
 ```
 > mkdir public
 > vim public/index.html                  # Write your index file
-> curl http://localhost:3000/index.html  # Returns your index file
+> curl http://localhost:9000/index.html  # Returns your index file
 ```
 
 Thus, if you want to use WebAccess UI, you need to put UI files in the `public`
@@ -90,6 +90,12 @@ public/
 ├── thumbs/
 └── ui/
 ```
+
+## Command-Line Option
+
+- `--port` | `-p`
+  - Port number to listen
+  - Default: 9000
 
 ## Limitations ##
 

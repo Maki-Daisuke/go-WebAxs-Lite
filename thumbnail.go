@@ -3,7 +3,10 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"net/url"
 	"os/exec"
 	"regexp"
 
@@ -26,7 +29,13 @@ func HandleThumbnail(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Query().Get("nonblocking") != "" {
 			handleNonBlocking(res)
 		} else {
-			handleThumbnailAux(res, req, file)
+			geometry := parseSize(req.URL.Query().Get("size"))
+			log.Printf("DEBUG: opts.Estelled=%d", opts.Estelled)
+			if opts.Estelled == 0 {
+				handleThumbnailMagick(res, req, file, geometry)
+			} else {
+				handleThumbnailEstelle(res, req, file, geometry)
+			}
 		}
 	}
 }
@@ -35,8 +44,7 @@ func handleNonBlocking(res http.ResponseWriter) {
 	res.WriteHeader(200)
 }
 
-func handleThumbnailAux(res http.ResponseWriter, req *http.Request, file *FilePath) {
-	geometry := parseSize(req.URL.Query().Get("size"))
+func handleThumbnailMagick(res http.ResponseWriter, req *http.Request, file *FilePath, geometry string) {
 	// convert <INPUT> -resize <SIZE> -background white -gravity center -extent <SIZE> - # output to STDOUT
 	cmd := exec.Command("convert", file.Physical(), "-resize", geometry, "-background", "white", "-gravity", "center", "-extent", geometry, "-format", "jpg", "-")
 	stdout := bytes.NewBuffer([]byte{})
@@ -53,6 +61,35 @@ func handleThumbnailAux(res http.ResponseWriter, req *http.Request, file *FilePa
 	if err != nil {
 		panic(err.Error())
 	}
+}
+
+func handleThumbnailEstelle(res http.ResponseWriter, req *http.Request, file *FilePath, geometry string) {
+	query := make(url.Values)
+	query.Set("path", file.Physical())
+	query.Set("size", geometry)
+	query.Set("overflow", "fit")
+	url := &url.URL{
+		Scheme:   "http",
+		Host:     fmt.Sprintf("localhost:%d", opts.Estelled),
+		Path:     "/file",
+		RawQuery: query.Encode(),
+	}
+	resp, err := http.Get(url.String())
+	if err != nil {
+		log.Printf("can't get thumbnail: %s", err)
+		log.Printf("then, fallback to ImageMagick")
+		handleThumbnailMagick(res, req, file, geometry) // Fallback to ImageMagick
+		return
+	}
+	defer resp.Body.Close()
+	thumb, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("can't get thumbnail: %s", err)
+		log.Printf("then, fallback to ImageMagick")
+		handleThumbnailMagick(res, req, file, geometry)
+		return
+	}
+	http.ServeFile(res, req, string(thumb))
 }
 
 var sizeAlias = map[string]string{

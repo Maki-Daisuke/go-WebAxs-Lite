@@ -30,7 +30,6 @@ func HandleThumbnail(res http.ResponseWriter, req *http.Request) {
 			handleNonBlocking(res)
 		} else {
 			geometry := parseSize(req.URL.Query().Get("size"))
-			log.Printf("DEBUG: opts.Estelled=%d", opts.Estelled)
 			if opts.Estelled == 0 {
 				handleThumbnailMagick(res, req, file, geometry)
 			} else {

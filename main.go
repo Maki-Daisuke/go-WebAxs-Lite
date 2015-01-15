@@ -13,7 +13,8 @@ import (
 )
 
 var opts struct {
-	Port uint `short:"p" long:"port" default:"9000" description:"Port number to listen"`
+	Port     uint `short:"p" long:"port" default:"9000" description:"Port number to listen"`
+	Estelled uint `short:"E" long:"estelle-port" default:"1186" description:"Port number of Estelled for thumbnails. Specify 0 if you don't use Estelled."`
 }
 
 func main() {

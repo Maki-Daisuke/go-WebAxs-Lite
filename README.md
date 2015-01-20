@@ -96,6 +96,10 @@ public/
 - `--port` | `-p`
   - Port number to listen
   - Default: 9000
+- `--estelle-port` | `-E`
+  - Port number of Estelled for thumbnails. Specify 0 if you don't use Estelled.
+  - See also about Estelle: https://github.com/Maki-Daisuke/estelle
+  - default: 1186
 
 ## Limitations ##
 

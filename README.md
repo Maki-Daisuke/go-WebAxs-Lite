@@ -101,6 +101,39 @@ public/
   - See also about Estelle: https://github.com/Maki-Daisuke/estelle
   - default: 1186
 
+
+## Run with Dokcer
+
+This repository has a `Dockerfile` as a sample. To use this, you need [Docker](https://docker.io/). I recommend you to use [Boot2docker](http://boot2docker.io/).
+
+At first, change your current directory to the directory with the `Dockerfile` and run the following command to build your Docker image:
+
+```shell
+docker build --tag=webaxs_lite .
+```
+
+After your image is successfully built, run the following command:
+
+```shell
+> docker run -v <PATH_TO_SHARE>:/mnt/share -p <PORT_NUMBER>:9000 webaxs_lite
+*** Running /etc/my_init.d/00_regen_ssh_host_keys.sh...
+No SSH host key available. Generating one...
+Creating SSH2 RSA key; this may take some time ...
+Creating SSH2 DSA key; this may take some time ...
+Creating SSH2 ECDSA key; this may take some time ...
+Creating SSH2 ED25519 key; this may take some time ...
+invoke-rc.d: policy-rc.d denied execution of restart.
+*** Running /etc/rc.local...
+*** Booting runit daemon...
+*** Runit started as PID 93
+[negroni] listening on :9000
+[negroni] listening on :1186
+```
+
+Now, you can access to WebAxs by opening `http://localhost:<PORT_NUMBER>`. (Please note that you need to access your Boot2docker's ip address instead of `localhost`.)
+
+Here, `<PATH_TO_SHARE>` is the directory you want to publish and `<PORT_NUMBER>` is port number you want to host the webaxs server.
+
 ## Limitations ##
 
 This implementation currently implements `ls` and `cat` command only (and, dummy
